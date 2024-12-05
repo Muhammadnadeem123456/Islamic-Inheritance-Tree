@@ -1,0 +1,162 @@
+def distribute_inheritance(amount, has_children, num_wives, num_daughters, num_granddaughters, has_grandsons, num_great_granddaughters, has_great_grandchildren, num_little_girls, has_little_boys, has_father, has_brothers, has_husband, has_wife, has_mother, num_real_sisters, has_real_brother, has_grandfather, num_alati_sisters, has_alati_brother, num_achiafi_siblings, num_jdat_e_qarb, num_jdat_e_sahiha):
+    # -Distribution for the wife/wives
+    if num_wives == 1:
+        if has_children:
+            wife_share = amount * 1/4  
+        else:
+            wife_share = amount * 1/2
+    elif num_wives > 1:
+        if has_children:
+            wife_share = amount * 1/4 
+        else:
+            wife_share = amount * 1/8
+    else:
+        wife_share = 0
+        wife_share_per = 0
+    
+    # -Distribution for the daughter(s)
+    if num_daughters == 1 and not has_children:
+        daughter_share = amount * 1/2  
+    elif num_daughters > 1 and not has_children:
+        daughter_share = amount * 2/3  
+    else:
+        daughter_share = 0  
+    
+    # -Distribution for the granddaughter(s)
+    granddaughter_share = 0
+    if not has_children and num_daughters == 0 and not has_grandsons:
+        if num_granddaughters == 1:
+            granddaughter_share = amount * 1/2  
+        elif num_granddaughters > 1:
+            granddaughter_share = amount * 2/3 
+    elif num_daughters == 1 and not has_grandsons:
+        granddaughter_share = amount * 1/6  
+    
+    # -Distribution for the great-granddaughter(s)
+    great_granddaughter_share = 0
+    if not has_children and num_daughters == 0 and not has_grandsons and num_granddaughters == 0 and not has_great_grandchildren:
+        if num_great_granddaughters == 1:
+            great_granddaughter_share = amount * 1/2
+        elif num_great_granddaughters > 1:
+            great_granddaughter_share = amount * 2/3
+    elif num_daughters == 1 or num_granddaughters == 1 and not has_great_grandchildren:
+        great_granddaughter_share = amount * 1/6
+    
+    # -Distribution for the little girl(s)
+    little_girl_share = 0
+    if not has_children and num_daughters == 0 and not has_grandsons and num_granddaughters == 0 and not has_great_grandchildren and num_great_granddaughters == 0 and not has_little_boys:
+        if num_little_girls == 1:
+            little_girl_share = amount * 1/2
+        elif num_little_girls > 1:
+            little_girl_share = amount * 2/3
+    elif (num_daughters == 1 or num_granddaughters == 1 or num_great_granddaughters == 1) and not has_little_boys:
+        little_girl_share = amount * 1/6
+    
+    # -Distribution for the father
+    father_share = 0
+    if has_father and has_children:
+        father_share = amount * 1/6
+        
+    # -Distribution for the mother
+    mother_share = 0
+    if has_mother:
+        if has_children:
+            if not has_brothers and (not has_father or has_husband):
+                mother_share = amount * 1/3
+            else:
+                mother_share = amount * 1/6
+        else:
+            mother_share = amount * 1/6
+    
+    # -Distribution for the real sister(s)
+    real_sister_share = 0
+    if not has_children and not has_father and not has_grandfather and not has_real_brother:
+        if num_real_sisters == 1:
+            real_sister_share = amount * 1/2 
+        elif num_real_sisters > 1:
+            real_sister_share = amount * 2/3
+
+    # -Distribution for Alati's (uterine) sister(s)
+    alati_sister_share = 0
+    if not has_children and not has_father and not has_grandfather and not has_real_brother and not has_alati_brother:
+        if num_alati_sisters == 1:
+            alati_sister_share = amount * 1/2
+        elif num_alati_sisters > 1:
+            alati_sister_share = amount * 2/3
+        elif num_real_sisters == 1 and num_alati_sisters > 0:
+            alati_sister_share = amount * 1/6
+
+    # -Distribution for Achiafi's siblings
+    achiafi_sibling_share = 0
+    if not has_children and not has_father and not has_grandfather:
+        if num_achiafi_siblings == 1:
+            achiafi_sibling_share = amount * 1/6
+        elif num_achiafi_siblings > 1:
+            achiafi_sibling_share = amount * 1/3
+
+    # -Distribution for Jdat-e-Qarb
+    jdat_e_qarb_share = 0
+    if has_children and not has_father and num_jdat_e_qarb == 1:
+        jdat_e_qarb_share = amount * 1/6  # Only one Jdat-e-Qarb 
+
+    # -Distribution for Jdat-e-Sahiha
+    jdat_e_sahiha_share = 0
+    if has_mother and num_jdat_e_sahiha > 1:
+        jdat_e_sahiha_share = amount * 1/6
+
+    # Calculate remaining amount after distributing to wife/wives, daughters, granddaughters, great-granddaughters, little girls, father, mother, real sisters, Alati's sisters, Achiafi's siblings, Jdat-e-Qarb, and Jdat-e-Sahiha
+    total_share = wife_share + (wife_share_per if num_wives > 1 else 0) + daughter_share + granddaughter_share + great_granddaughter_share + little_girl_share + father_share + mother_share + real_sister_share + alati_sister_share + achiafi_sibling_share + jdat_e_qarb_share + jdat_e_sahiha_share
+    remaining_amount = amount - total_share
+
+    return {
+        'wife_share': wife_share if num_wives == 1 else wife_share_per,
+        'daughter_share': daughter_share,
+        'granddaughter_share': granddaughter_share,
+        'great_granddaughter_share': great_granddaughter_share,
+        'little_girl_share': little_girl_share,
+        'father_share': father_share,
+        'mother_share': mother_share,
+        'real_sister_share': real_sister_share,
+        'alati_sister_share': alati_sister_share,
+        'achiafi_sibling_share': achiafi_sibling_share,
+        'jdat_e_qarb_share': jdat_e_qarb_share,
+        'jdat_e_sahiha_share': jdat_e_sahiha_share,
+        'remaining_amount': remaining_amount
+    }
+
+# -Example usage:
+amount = 30
+has_children = True
+num_wives = 1
+num_daughters = 0
+num_granddaughters = 0
+has_grandsons = False
+num_great_granddaughters = 0
+has_great_grandchildren = False
+num_little_girls = 0
+has_little_boys = False
+has_father = False
+has_brothers = False
+has_husband = False
+has_wife = True
+has_mother = True
+num_real_sisters = 0
+has_real_brother = False
+has_grandfather = False
+num_alati_sisters = 0
+has_alati_brother = False
+num_achiafi_siblings = 0
+num_jdat_e_qarb = 0
+num_jdat_e_sahiha = 0
+
+# -Calculate distribution
+distribution = distribute_inheritance(
+    amount, has_children, num_wives, num_daughters, num_granddaughters, 
+    has_grandsons, num_great_granddaughters, has_great_grandchildren, 
+    num_little_girls, has_little_boys, has_father, has_brothers, 
+    has_husband, has_wife, has_mother, num_real_sisters, has_real_brother, 
+    has_grandfather, num_alati_sisters, has_alati_brother, num_achiafi_siblings, 
+    num_jdat_e_qarb, num_jdat_e_sahiha
+)
+
+print(distribution)
